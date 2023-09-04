@@ -59,9 +59,11 @@ class WechatMPChannel(ChatChannel):
 
     def startup(self):
         if self.passive_reply:
-            urls = ("/wx", "channel.wechatmp.passive_reply.Query")
+            urls = ("/wx", "channel.wechatmp.passive_reply.Query",
+                    "/healthcheck", "channel.wechatmp.wechatmp_channel.HealthCheck")
         else:
-            urls = ("/wx", "channel.wechatmp.active_reply.Query")
+            urls = ("/wx", "channel.wechatmp.active_reply.Query",
+                    "/healthcheck", "channel.wechatmp.wechatmp_channel.HealthCheck")
         app = web.application(urls, globals(), autoreload=False)
         port = conf().get("wechatmp_port", 8080)
         web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
@@ -214,3 +216,8 @@ class WechatMPChannel(ChatChannel):
         if self.passive_reply:
             assert session_id not in self.cache_dict
             self.running.remove(session_id)
+
+
+class HealthCheck:
+    def GET(self):
+        return "OK"

@@ -44,7 +44,8 @@ class WechatComAppChannel(ChatChannel):
 
     def startup(self):
         # start message listener
-        urls = ("/wxcomapp", "channel.wechatcom.wechatcomapp_channel.Query")
+        urls = ("/wxcomapp", "channel.wechatcom.wechatcomapp_channel.Query",
+                "/healthcheck", "channel.wechatcom.wechatcomapp_channel.HealthCheck")
         app = web.application(urls, globals(), autoreload=False)
         port = conf().get("wechatcomapp_port", 9898)
         web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
@@ -176,3 +177,8 @@ class Query:
             if context:
                 channel.produce(context)
         return "success"
+
+
+class HealthCheck:
+    def GET(self):
+        return "OK"
